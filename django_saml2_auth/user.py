@@ -90,7 +90,7 @@ def create_new_user(email: str,
     return user
 
 
-def get_or_create_user(user: Dict[str, Any]) -> Tuple[bool, User]:
+def get_or_create_user(user: Dict[str, Any], request=None) -> Tuple[bool, User]:
     """Get or create a new user and optionally add it to one or more group(s)
 
     Args:
@@ -349,7 +349,7 @@ def create_jwt_token(user_id: str) -> Optional[str]:
     return jwt.encode(payload, secret, algorithm=jwt_algorithm)
 
 
-def create_custom_or_default_jwt(user: Union[str, User]):
+def create_custom_or_default_jwt(user: Union[str, User], request=None):
     """Create a new JWT token, eventually using custom trigger
 
     Args:
@@ -382,7 +382,7 @@ def create_custom_or_default_jwt(user: Union[str, User]):
                 user_model.USERNAME_FIELD: user_id
             }
             target_user = get_user(_user)
-        jwt_token = run_hook(custom_create_jwt_trigger, target_user)  # type: ignore
+        jwt_token = run_hook(custom_create_jwt_trigger, target_user, request)  # type: ignore
     else:
         # If user_id is not set, retrieve it from user instance
         if not user_id:
